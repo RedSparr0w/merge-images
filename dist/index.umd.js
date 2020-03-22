@@ -21,7 +21,6 @@
 	};
 
 	var getY = function (image, height) {
-		console.log(height, image.bottom, image.img.height, (height - (image.bottom + image.img.height)));
 		if (image.bottom)
 			{ return height - (image.bottom + image.img.height); }
 		return image.top || image.y || 0;
