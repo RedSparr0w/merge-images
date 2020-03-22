@@ -9,9 +9,16 @@ var defaultOptions = {
 };
 
 var getX = function (image, width) {
+	if (image.right)
+		{ return width - (image.right + image.img.width); }
+	return image.left || image.x || 0;
+};
+
+var getY = function (image, height) {
+	console.log(height, image.bottom, image.img.height, (height - (image.bottom + image.img.height)));
 	if (image.bottom)
-		{ return width - (image.bottom + image.width); }
-	return image.x || 0;
+		{ return height - (image.bottom + image.img.height); }
+	return image.top || image.y || 0;
 };
 
 // Return Promise
@@ -55,7 +62,7 @@ var mergeImages = function (sources, options) {
 			// Draw images to canvas
 			images.forEach(function (image) {
 				ctx.globalAlpha = image.opacity ? image.opacity : 1;
-				return ctx.drawImage(image.img, getX(image, canvas.width), getX(image, canvas.height));
+				return ctx.drawImage(image.img, getX(image, canvas.width), getY(image, canvas.height));
 			});
 
 			if (options.Canvas && options.format === 'image/jpeg') {

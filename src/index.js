@@ -8,6 +8,19 @@ const defaultOptions = {
 	crossOrigin: undefined
 };
 
+const getX = (image, width) => {
+	if (image.right)
+		return width - (image.right + image.img.width);
+	return image.left || image.x || 0;
+}
+
+const getY = (image, height) => {
+	console.log(height, image.bottom, image.img.height, (height - (image.bottom + image.img.height)));
+	if (image.bottom)
+		return height - (image.bottom + image.img.height);
+	return image.top || image.y || 0;
+}
+
 // Return Promise
 const mergeImages = (sources = [], options = {}) => new Promise(resolve => {
 	options = Object.assign({}, defaultOptions, options);
@@ -45,7 +58,7 @@ const mergeImages = (sources = [], options = {}) => new Promise(resolve => {
 			// Draw images to canvas
 			images.forEach(image => {
 				ctx.globalAlpha = image.opacity ? image.opacity : 1;
-				return ctx.drawImage(image.img, image.x || 0, image.y || 0);
+				return ctx.drawImage(image.img, getX(image, canvas.width), getY(image, canvas.height));
 			});
 
 			if (options.Canvas && options.format === 'image/jpeg') {
