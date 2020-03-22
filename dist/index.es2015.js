@@ -9,13 +9,13 @@ var defaultOptions = {
 };
 
 var getX = function (image, width) {
-	if (image.right)
+	if (image.right != undefined)
 		{ return width - (image.right + image.img.width); }
 	return image.left || image.x || 0;
 };
 
 var getY = function (image, height) {
-	if (image.bottom)
+	if (image.bottom != undefined)
 		{ return height - (image.bottom + image.img.height); }
 	return image.top || image.y || 0;
 };
