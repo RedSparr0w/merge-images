@@ -61,7 +61,7 @@ var mergeImages = function (sources, options) {
 			// Draw images to canvas
 			images.forEach(function (image) {
 				ctx.globalAlpha = image.opacity ? image.opacity : 1;
-				return ctx.drawImage(image.img, getX(image, canvas.width), getY(image, canvas.height));
+				return ctx.drawImage(image.img, getX(image, canvas.width), getY(image, canvas.height), image.width || image.img.width, image.height || image.img.height);
 			});
 
 			if (options.Canvas && options.format === 'image/jpeg') {
