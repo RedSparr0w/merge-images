@@ -10,13 +10,13 @@ const defaultOptions = {
 
 const getX = (image, width) => {
 	if (image.right != undefined)
-		return width - (image.right + image.img.width);
+		return width - (image.right + (image.width || image.img.width));
 	return image.left || image.x || 0;
 }
 
 const getY = (image, height) => {
 	if (image.bottom != undefined)
-		return height - (image.bottom + image.img.height);
+		return height - (image.bottom + (image.height || image.img.height));
 	return image.top || image.y || 0;
 }
 
