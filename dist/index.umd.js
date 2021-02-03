@@ -11,7 +11,7 @@
 		width: undefined,
 		height: undefined,
 		Canvas: undefined,
-		crossOrigin: undefined
+		crossOrigin: undefined,
 	};
 
 	var getX = function (image, width) {
@@ -51,6 +51,7 @@
 			img.onerror = function () { return reject(new Error('Couldn\'t load image')); };
 			img.onload = function () { return resolve(Object.assign({}, source, { img: img })); };
 			img.src = source.src;
+			img.custom = source.custom;
 		}); });
 
 		// Get canvas context
@@ -66,8 +67,23 @@
 
 				// Draw images to canvas
 				images.forEach(function (image) {
-					ctx.globalAlpha = image.opacity ? image.opacity : 1;
-					return ctx.drawImage(image.img, getX(image, canvas.width), getY(image, canvas.height), image.width || image.img.width, image.height || image.img.height);
+					// Local canvas
+					var _canvas = options.Canvas ? new options.Canvas() : window.document.createElement('canvas');
+					_canvas.width = image.width || image.img.width;
+					_canvas.height = image.height || image.img.height;
+
+					// Local context
+					var _ctx = _canvas.getContext('2d');
+					_ctx.globalAlpha = image.opacity || 1;
+
+					// Check if any custom filtering
+					if (image.custom) { image.custom(_ctx, image); }
+
+					// Draw the image locally
+					_ctx.drawImage(image.img, 0, 0, image.width || image.img.width, image.height || image.img.height);
+
+					// Add image to main canvas
+					ctx.drawImage(_ctx.canvas, getX(image, canvas.width), getY(image, canvas.height), image.width || image.img.width, image.height || image.img.height);
 				});
 
 				if (options.Canvas && options.format === 'image/jpeg') {

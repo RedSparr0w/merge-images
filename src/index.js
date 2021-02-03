@@ -5,7 +5,7 @@ const defaultOptions = {
 	width: undefined,
 	height: undefined,
 	Canvas: undefined,
-	crossOrigin: undefined
+	crossOrigin: undefined,
 };
 
 const getX = (image, width) => {
@@ -41,6 +41,7 @@ const mergeImages = (sources = [], options = {}) => new Promise(resolve => {
 		img.onerror = () => reject(new Error('Couldn\'t load image'));
 		img.onload = () => resolve(Object.assign({}, source, { img }));
 		img.src = source.src;
+		img.custom = source.custom;
 	}));
 
 	// Get canvas context
@@ -56,8 +57,23 @@ const mergeImages = (sources = [], options = {}) => new Promise(resolve => {
 
 			// Draw images to canvas
 			images.forEach(image => {
-				ctx.globalAlpha = image.opacity ? image.opacity : 1;
-				return ctx.drawImage(image.img, getX(image, canvas.width), getY(image, canvas.height), image.width || image.img.width, image.height || image.img.height);
+				// Local canvas
+				const _canvas = options.Canvas ? new options.Canvas() : window.document.createElement('canvas');
+				_canvas.width = image.width || image.img.width;
+				_canvas.height = image.height || image.img.height;
+
+				// Local context
+				const _ctx = _canvas.getContext('2d');
+				_ctx.globalAlpha = image.opacity || 1;
+
+				// Check if any custom filtering
+				if (image.custom) image.custom(_ctx, image);
+
+				// Draw the image locally
+				_ctx.drawImage(image.img, 0, 0, image.width || image.img.width, image.height || image.img.height);
+
+				// Add image to main canvas
+				ctx.drawImage(_ctx.canvas, getX(image, canvas.width), getY(image, canvas.height), image.width || image.img.width, image.height || image.img.height);
 			});
 
 			if (options.Canvas && options.format === 'image/jpeg') {
