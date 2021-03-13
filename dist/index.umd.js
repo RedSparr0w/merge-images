@@ -48,7 +48,7 @@
 			// Resolve source and img when loaded
 			var img = new Image();
 			img.crossOrigin = options.crossOrigin;
-			img.onerror = function () { return reject(new Error('Couldn\'t load image')); };
+			img.onerror = function () { return reject(new Error(("Couldn't load image: " + (img.src || 'unknown source')))); };
 			img.onload = function () { return resolve(Object.assign({}, source, { img: img })); };
 			img.src = source.src;
 			img.custom = source.custom;
